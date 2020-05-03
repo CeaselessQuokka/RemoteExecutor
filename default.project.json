@@ -1,0 +1,12 @@
+{
+	"name": "Remote Executor",
+
+	"tree": {
+		"$className": "DataModel",
+
+		"Lighting": {
+			"$className": "Lighting",
+			"$path": "src/Server"
+		}
+	}
+}
