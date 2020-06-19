@@ -1,11 +1,13 @@
 --- Remote
 -- @created 5/4/2020
--- @edited 5/4/2020
+-- @edited 6/19/2020
 -- @usage Exposes the plugin remote API.
--- @dependencies Widget, PluginConstants, ArgumentManager
+-- @dependencies Widget, Constants, ArgumentManager
 
 --- Services ---
+local Players = game:GetService("Players")
 local Selection = game:GetService("Selection")
+local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 
 --- Modules ---
@@ -25,7 +27,7 @@ local function Parse(content)
 	if number then
 		return number
 	else
-		local _string = content:match("^%s*\"(.+)\"")
+		local _string = content:match("^%s*[\"'](.+)[\"']")
 
 		if _string then
 			return _string
@@ -35,8 +37,7 @@ local function Parse(content)
 			if successful then
 				return response
 			else
-				warn("NOTE: The JSON you passed was invalid, and was replaced with \"[]\".")
-				return "[]"
+				error("The JSON you passed was invalid. If you meant to input a string don't forget to put it in quotes.", 0)
 			end
 		end
 	end
@@ -163,6 +164,8 @@ end
 
 -- Fires/invokes the remote.
 function Remote:Execute()
+	local player = Players:GetPlayers()[1]
+	local isClient = RunService:IsClient()
 	local arguments = {}
 
 	for index, argumentObject in next, self.ArgumentManager.Arguments do
@@ -174,9 +177,17 @@ function Remote:Execute()
 	end
 
 	if self.Instance:IsA("RemoteEvent") then
-		self.Instance:FireServer(table.unpack(arguments))
+		if isClient then
+			self.Instance:FireServer(table.unpack(arguments))
+		else
+			self.Instance:FireClient(player, table.unpack(arguments))
+		end
 	else
-		self.Instance:InvokeServer(table.unpack(arguments))
+		if isClient then
+			self.Instance:InvokeServer(table.unpack(arguments))
+		else
+			self.Instance:InvokeClient(player, table.unpack(arguments))
+		end
 	end
 end
 
