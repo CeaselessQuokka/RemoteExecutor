@@ -1,6 +1,6 @@
 --- Helper Function
 -- @created 5/4/2020
--- @edited 5/4/2020
+-- @edited 6/19/2020
 -- @usage Random helper functions.
 
 --- Services ---
@@ -16,7 +16,7 @@ local RemoteStorages = {Lighting, Workspace, ReplicatedStorage}
 
 --- Functions ---
 function CopyTable(tbl)
-	-- Ignores metatables and cyclic tables.
+	-- Doesn't support metatables and cyclic tables.
 
 	if type(tbl) == "table" then
 		local copy = {}
@@ -54,7 +54,7 @@ return {
 	end,
 
 	IsEnvironmentValid = function()
-		return RunService:IsRunning() and RunService:IsClient()
+		return RunService:IsRunning()
 	end,
 
 	GetPrettyPath = function(instance)
