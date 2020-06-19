@@ -1,6 +1,6 @@
 --- Remote Executor
 -- @created 5/4/2020
--- @edited 5/4/2020
+-- @edited 6/19/2020
 -- @usage Handles the creation, initiation, and function of the plugin.
 -- @dependencies HelperFunctions, Event, Widget, MenuManager, RemoteManager, SettingsManager, InformationManager
 
@@ -138,7 +138,7 @@ if HelperFunctions.IsEnvironmentValid() then
 	plugin.Deactivation:Connect(Deactivate)
 else
 	Button.Click:Connect(function()
-		warn("This plugin is only usable on the client.")
+		warn("This plugin is only usable in a running instance.")
 	end)
 end
 
