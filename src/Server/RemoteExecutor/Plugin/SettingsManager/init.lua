@@ -11,8 +11,10 @@ local DetailsHandler = require(script.Parent.UI.DetailsHandler)
 
 --- Data ---
 local SettingsData = {
-	ShowParameters = {
+	-- General
+	{
 		Type = "Dropdown",
+		Name = "ShowParameters",
 		Details = "Shows parameter names next to arguments when a Parameter Preset is available.\n\nRefer to the Parameter Preset section for more information.",
 		DisplayName = "Show Parameters",
 
@@ -22,8 +24,9 @@ local SettingsData = {
 		}
 	},
 
-	UseTypeChecking = {
+	{
 		Type = "Dropdown",
+		Name = "UseTypeChecking",
 		Details = "When true (and if you have a parameter preset selected (refer to the Parameter Preset section for more information)) the plugin will do (very simple) type checking for your arguments.",
 		DisplayName = "Use Type Checking",
 
@@ -35,8 +38,9 @@ local SettingsData = {
 		}
 	},
 
-	SendInvalidExecutions = {
+	{
 		Type = "Dropdown",
+		Name = "SendInvalidExecutions",
 		Details = "If you have UseTypeChecking enabled, and if a remote were to not have valid data inputted then the remote would not be executed.",
 		DisplayName = "Send Invalid Execution",
 
@@ -46,8 +50,9 @@ local SettingsData = {
 		}
 	},
 
-	DoubleClickThreshold = {
+	{
 		Type = "Input",
+		Name = "DoubleClickThreshold",
 		Details = "The speed in which you have to click twice to make a secondary action happen.",
 		DisplayName = "Double Click Threshold",
 
@@ -63,13 +68,96 @@ local SettingsData = {
 
 			return false, "Enter a number that is at least 0.25 and at most 5."
 		end
+	},
+
+	-- Batch Request
+	{
+		Type = "Input",
+		Name = "BatchSize",
+		Details = "The number of requests to be sent in one batch.",
+		DisplayName = "Batch Request Size",
+
+		Sanitize = function(value)
+			-- Number
+			local newValue = tonumber(value)
+
+			if newValue then
+				if newValue > 0 and newValue % 1 == 0 then
+					return true, newValue
+				end
+			end
+
+			return false, "Enter an integer that is at least 1."
+		end
+	},
+
+	{
+		Name = "NumberOfBatches",
+		Type = "Input",
+		Details = "The number of times to repeat the batch of requests.",
+		DisplayName = "Repeat Batches",
+
+		Sanitize = function(value)
+			-- Number
+			local newValue = tonumber(value)
+
+			if newValue then
+				if newValue >= 0 and newValue % 1 == 0 then
+					return true, newValue
+				end
+			end
+
+			return false, "Enter an integer that is at least 0."
+		end
+	},
+
+	{
+		Type = "Input",
+		Name = "TimeBetweenRequest",
+		Details = "The time in between each request.",
+		DisplayName = "Request Delay",
+
+		Sanitize = function(value)
+			-- Number
+			local newValue = tonumber(value)
+
+			if newValue then
+				if newValue >= 0 then
+					return true, newValue
+				end
+			end
+
+			return false, "Enter a number that is at least 0."
+		end
+	},
+
+	{
+		Type = "Input",
+		Name = "TimeBetweenBatches",
+		Details = "The time in between each batch.",
+		DisplayName = "Batch Delay",
+
+		Sanitize = function(value)
+			-- Number
+			local newValue = tonumber(value)
+
+			if newValue then
+				if newValue >= 0 then
+					return true, newValue
+				end
+			end
+
+			return false, "Enter a number that is at least 0."
+		end
 	}
 }
 
 --- GUIs ---
 local SettingsMenu = Widget.SettingsMenu
 local SettingsList = Widget.SettingsList
+local SettingsLayout = Widget.SettingsList.Layout
 local SettingsDetails = Widget.SettingsDetails
+local SettingsValuesList = Widget.SettingsValuesList
 
 --- Templates ---
 local SettingTemplate = Widget.Templates.Setting
@@ -85,8 +173,9 @@ function Manager.new(plugin)
 	}, Manager)
 
 	-- Create settings and its corresponding value.
-	for settingName, settingData in next, SettingsData do
+	for index, settingData in ipairs(SettingsData) do
 		local setting = SettingTemplate:Clone()
+		local settingName = settingData.Name
 
 		setting.Name = settingName
 		setting.Title.Text = settingData.DisplayName
@@ -115,6 +204,7 @@ function Manager.new(plugin)
 
 	-- Register
 	DetailsHandler.new(SettingsDetails)
+	settingsManagerObject:UpateListSize()
 	return settingsManagerObject
 end
 
@@ -130,6 +220,12 @@ end
 function Manager:DisplayValues()
 	SettingsMenu.Values.Visible = true
 	SettingsMenu.Details.Visible = false
+end
+
+function Manager:UpateListSize()
+	local size = UDim2.new(0, 0, 0, SettingsLayout.AbsoluteContentSize.Y + 4)
+	SettingsList.CanvasSize = size
+	SettingsValuesList.CanvasSize = size
 end
 
 -- Context Menus
