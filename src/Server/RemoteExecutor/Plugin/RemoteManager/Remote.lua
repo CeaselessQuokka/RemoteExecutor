@@ -129,7 +129,6 @@ function Remote:Restore(noUpdate)
 	self.Enabled = true
 	self.Restored = true
 
-
 	self.GUI.Parent = Widget.RemotesList
 	self.RestoredGUI.Parent = Widget.RestoredRemotesList
 	self.DisabledGUI.Parent = nil
@@ -187,6 +186,27 @@ function Remote:Execute()
 			self.Instance:InvokeServer(table.unpack(arguments))
 		else
 			self.Instance:InvokeClient(player, table.unpack(arguments))
+		end
+	end
+end
+
+function Remote:BatchExecute()
+	local batchSize = Widget.Settings:Get("BatchSize")
+	local numberOfBatches = Widget.Settings:Get("NumberOfBatches")
+	local timeBetweenRequest = Widget.Settings:Get("TimeBetweenRequest")
+	local timeBetweenBatches = Widget.Settings:Get("TimeBetweenBatches")
+
+	for index1 = 1, numberOfBatches + 1 do
+		for index2 = 1, batchSize do
+			self:Execute()
+
+			if timeBetweenRequest > 0 then
+				wait(timeBetweenRequest)
+			end
+		end
+
+		if timeBetweenBatches > 0 then
+			wait(timeBetweenBatches)
 		end
 	end
 end
@@ -358,8 +378,12 @@ end
 function Remote:DisplaySilenceContextMenu()
 	local menu = self.Plugin:CreatePluginMenu("Remote_Silence_Menu", "Remote Silence")
 
-	menu:AddNewAction("Silence_Confirm", "Execute Remote With Warning Surpression").Triggered:Connect(function()
+	menu:AddNewAction("Suppress_Confirm", "Execute Remote With Warning Suppression").Triggered:Connect(function()
 		self:Execute()
+	end)
+
+	menu:AddNewAction("Batch_Request", "Send Batch of Requests (Settings in Settings Menu)").Triggered:Connect(function()
+		self:BatchExecute()
 	end)
 
 	menu:ShowAsync()
