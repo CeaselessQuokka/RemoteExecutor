@@ -10,10 +10,17 @@ local HttpService = game:GetService("HttpService")
 
 --- Declarations ---
 local DefaultSettings = {
+	-- General
 	ShowParameters = true,
 	UseTypeChecking = "Full",
 	DoubleClickThreshold = 0.5, -- The default Windows speed.
-	SendInvalidExecutions = true
+	SendInvalidExecutions = true,
+
+	-- Batch Requesting
+	BatchSize = 10,
+	NumberOfBatches = 0,
+	TimeBetweenRequest = 0,
+	TimeBetweenBatches = 0
 }
 
 local DefaultIgnoreList = {
