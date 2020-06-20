@@ -7,7 +7,7 @@
 return {
 	-- Plugin Keys
 	IGNORE_LIST_KEY = "QDT_RemoteExecutor_IgnoreList_V2",
-	PLUGIN_SETTINGS_KEY = "QDT_RemoteExecutor_PLUGIN_V2",
+	PLUGIN_SETTINGS_KEY = "QDT_RemoteExecutor_PLUGIN_V3",
 	PRESETS_SETTINGS_KEY = "QDT_RemoteExecutor_PRESETS_V2",
 
 	-- Colors
