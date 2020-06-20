@@ -1,24 +1,25 @@
 --- Event
 -- @usage Custom signal class.
 
-return {
-	new = function()
-		local signalObject = {}
+local Signal = {}
+Signal.__index = Signal
 
-		function signalObject:Connect(callback)
-			self.Callback = callback
-		end
+function Signal.new()
+	return setmetatable({}, Signal)
+end
 
-		function signalObject:Disconnect()
-			self.Callback = nil
-		end
+function Signal:Connect(callback)
+	self.Callback = callback
+end
 
-		function signalObject:Fire(...)
-			if self.Callback then
-				self.Callback(...)
-			end
-		end
+function Signal:Disconnect()
+	self.Callback = nil
+end
 
-		return signalObject
+function Signal:Fire(...)
+	if self.Callback then
+		self.Callback(...)
 	end
-}
+end
+
+return Signal
