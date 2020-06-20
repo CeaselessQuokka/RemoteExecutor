@@ -99,7 +99,7 @@ if HelperFunctions.IsEnvironmentValid() then
 		end)
 
 		Widget.RemotesMenu.Arguments.Execute.MouseButton2Click:Connect(function()
-			-- Fires/invokes the remote with warning supression.
+			-- Fires/invokes the remote with warning supperssion.
 			local remote = Widget.CurrentRemote
 
 			if remote then
@@ -138,6 +138,8 @@ if HelperFunctions.IsEnvironmentValid() then
 	plugin.Deactivation:Connect(Deactivate)
 else
 	Button.Click:Connect(function()
+		plugin:Activate(false)
+		Button:SetActive(false)
 		warn("This plugin is only usable in a running instance.")
 	end)
 end
