@@ -5,7 +5,7 @@
 -- @dependencies HelperFunctions, Event, Widget, MenuManager, RemoteManager, SettingsManager, InformationManager
 
 --- Declarations --
-local Toolbar = plugin:CreateToolbar("Quokka's Developer Tools")
+local Toolbar = plugin:CreateToolbar("Dev Tools")
 local Button = Toolbar:CreateButton("", "", "rbxassetid://4978429323")
 
 --- Module ---
