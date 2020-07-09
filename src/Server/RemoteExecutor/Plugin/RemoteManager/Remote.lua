@@ -24,7 +24,13 @@ local function Parse(content)
 	-- Very simple (and awful) parsing. I'll probably (and hopefully) add a better method at some point.
 	local number = tonumber(content)
 
-	if number then
+	if content == "true" then
+		return true
+	elseif content == "false" then
+		return false
+	elseif content == "nil" then
+		return nil
+	elseif number then
 		return number
 	else
 		local _string = content:match("^%s*[\"'](.+)[\"']")
@@ -166,26 +172,29 @@ function Remote:Execute()
 	local player = Players:GetPlayers()[1]
 	local isClient = RunService:IsClient()
 	local arguments = {}
+	local n = 0
 
 	for index, argumentObject in next, self.ArgumentManager.Arguments do
 		local text = argumentObject.Content.Text
 
-		if #text > 0 then -- Ignore empty arguments.
-			arguments[#arguments + 1] = Parse(text)
+		if #text > 0 then
+			arguments[n + 1] = Parse(text)
 		end
+
+		n = n + 1
 	end
 
 	if self.Instance:IsA("RemoteEvent") then
 		if isClient then
-			self.Instance:FireServer(table.unpack(arguments))
+			self.Instance:FireServer(table.unpack(arguments, 1, n))
 		else
-			self.Instance:FireClient(player, table.unpack(arguments))
+			self.Instance:FireClient(player, table.unpack(arguments, 1, n))
 		end
 	else
 		if isClient then
-			self.Instance:InvokeServer(table.unpack(arguments))
+			self.Instance:InvokeServer(table.unpack(arguments, 1, n))
 		else
-			self.Instance:InvokeClient(player, table.unpack(arguments))
+			self.Instance:InvokeClient(player, table.unpack(arguments, 1, n))
 		end
 	end
 end
